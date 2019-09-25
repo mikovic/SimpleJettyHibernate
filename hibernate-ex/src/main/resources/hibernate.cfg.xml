@@ -5,7 +5,7 @@
 <hibernate-configuration>
     <session-factory>
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="connection.url">jdbc:mysql://localhost:3306/geek_library?useSSL=false&amp;serverTimezone=UTC</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/shop?useSSL=false&amp;serverTimezone=UTC</property>
         <property name="connection.username">geek</property>
         <property name="connection.password">geek</property>
 
@@ -16,5 +16,10 @@
         <property name="show_sql">true</property>
 
         <property name="current_session_context_class">thread</property>
+
+
     </session-factory>
+
+
+
 </hibernate-configuration>
