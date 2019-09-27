@@ -10,129 +10,102 @@ public class MainClass {
     public static void main(String[] args) {
         SessionFactory factory = new Configuration()
                 .configure("hibernate.cfg.xml")
-                .addAnnotatedClass(Book.class)
-                .addAnnotatedClass(Author.class)
-                .addAnnotatedClass(Reader.class)
+                .addAnnotatedClass(User.class)
+                .addAnnotatedClass(Product.class)
                 .buildSessionFactory();
-        // CRUD
+
         Session session = null;
-//
-//        session = factory.getCurrentSession();
-//        session.beginTransaction();
-//        List<Reader> readers = session.createQuery("from Reader").getResultList();
-//        System.out.println(readers);
-//        session.getTransaction().commit();
 
-//        try {
-//            // CREATE
-//            session = factory.getCurrentSession();
-//            Book tmpBook = new Book();
-//            tmpBook.setTitle("Java 2");
-//            session.beginTransaction();
-//            session.save(tmpBook);
-//            session.getTransaction().commit();
-//        } finally {
-//            factory.close();
-//            session.close();
-//        }
-//
-//        try {
-////           // CREATE
-//            session = factory.getCurrentSession();
-//            Book tmpBook = new Book();
-//            tmpBook.setTitle("Java 2");
-//            session.beginTransaction();
-//            session.save(tmpBook);
-//            session.getTransaction().commit();
-//        } finally {
-//            factory.close();
-//            session.close();
-//        }
-
-           // READ
-//            session = factory.getCurrentSession();
-//            session.beginTransaction();
-//            Book harryPotterBook = session.get(Book.class, 2);
-//            session.getTransaction().commit();
-//            System.out.println(harryPotterBook);
-
-//            UPDATE
-//            session = factory.getCurrentSession();
-//            session.beginTransaction();
-//            Book bookJava1 = session.get(Book.class, 3);
-//            bookJava1.setTitle("Java 1 Advanced");
-//            session.getTransaction().commit();
-//            System.out.println(bookJava1);
-
-//DELETE
-//            session = factory.getCurrentSession();
-//            session.beginTransaction();
-//            Book bookJava1 = session.get(Book.class, 1);
-//            session.delete(bookJava1);
-//            session.getTransaction().commit();
-
-//            session = factory.getCurrentSession();
-//            session.beginTransaction();
-//////             подставлем условие 1 из трех законменированных вариантов
-//         //List<Book> allBooks = session.createQuery("from Book").getResultList();
-//          //List<Book> allBooks = session.createQuery("from Book b where b.title = 'Java 1 Advanced'").getResultList();
-//        //  List<Book> allBooks = session.createQuery("from Book b where b.title = :title").setParameter("title", "Java 2").getResultList();
-//            System.out.println(allBooks);
-//            session.getTransaction().commit();
-
-//            session = factory.getCurrentSession();
-//            session.beginTransaction();
-//            session.createQuery("delete from Book where id = 3").executeUpdate();
-//            session.getTransaction().commit();
-
-
-        //            session.createQuery("delete from Book where id = 3").executeUpdate();
-
-// CREATE
-//        try {
-//            session = factory.getCurrentSession();
-//            Author author = new Author();
-//            author.setName("rolling1");
-//            session.beginTransaction();
-//            session.save(author);
-//            session.getTransaction().commit();
-//        } finally {
-//            factory.close();
-//            session.close();
-//        }
-
-//        session = factory.getCurrentSession();
-//        session.beginTransaction();
-//        Author author = session.get(Author.class, 2);
-//        session.delete(author);
-//        session.getTransaction().commit();
-
-//        session = factory.getCurrentSession();
-//        session.beginTransaction();
-//        Author author = session.get(Author.class, 2);
-//        session.delete(author);
-//        session.getTransaction().commit();
-////
-//            session = factory.getCurrentSession();
-//            session.beginTransaction();
-//            Reader reader = session.get(Reader.class, 1);
-//            System.out.println(reader);
-//            session.getTransaction().commit();
-
-//            session = factory.getCurrentSession();
-//            session.beginTransaction();
-//            List<Author> author = session.createQuery("from Author").getResultList();
-//            System.out.println(author);
-//            session.getTransaction().commit();
+        try {
 
             session = factory.getCurrentSession();
+            User student = new User();
+            User emploee = new User();
+            Product apple = new Product();
+            Product toy =new Product();
+            Product book =new Product();
+            Product car = new Product();
+            student.setName("Ivan");
+            emploee.setName("Petr");
+            apple.setTitle("Apple");
+            apple.setCost(20);
+            toy.setTitle("Barby");
+            book.setTitle("Duma");
+            car.setTitle("Car-toy");
+            toy.setCost(500);
+            book.setCost(200);
+            car.setCost(300);
+            student.addProduct(book);
+            student.addProduct(toy);
+            emploee.addProduct(apple);
+            emploee.addProduct(book);
+            emploee.addProduct(car);
+
             session.beginTransaction();
-            Author author = session.get(Author.class, 1);
-            session.delete(author);
+
+            session.save(apple);
+            session.save(toy);
+            session.save(book);
+            session.save(car);
+            session.save(student);
+            session.save(emploee);
+
             session.getTransaction().commit();
-//        } finally {
-//            factory.close();
-//            session.close();
-//        }
+        } finally {
+            factory.close();
+            session.close();
+        }
+        session = factory.getCurrentSession();
+        session.beginTransaction();
+        User user1 = session.get(User.class, 1);
+        User user2 = session.get(User.class, 2);
+        Product product1 = session.get(Product.class, 1);
+        Product product2 = session.get(Product.class, 2);
+        Product product3 = session.get(Product.class, 3);
+        Product product4 = session.get(Product.class, 4);
+        user1.addProduct(product1);
+        user1.addProduct(product2);
+        user2.addProduct(product2);
+        user2.addProduct(product3);
+        user2.addProduct(product4);
+        try {
+            session.update(user1);
+            session.update(user2);
+        }finally {
+            factory.close();
+            session.close();
+        }
+
+
+        session = factory.getCurrentSession();
+        session.beginTransaction();
+
+        List<Product> allProducts = session.createQuery("select  p from Product p").getResultList();
+        for (Product p: allProducts) {
+            System.out.println(p.getTitle() + " " + p.getCost());
+        }
+
+        List<User> allUsers = session.createQuery("select distinct  u from User u" +
+                " left join fetch u.products where u.name = :name").setParameter("name", "Petr").getResultList();
+        for (User u: allUsers) {
+            System.out.println(" ID "+ u.getName() +": "+u.getId());
+            for (Product p: u.getProducts()){
+                System.out.println(p.getTitle() + " " + p.getCost());
+            }
+        }
+        List<Product> products = session.createQuery("select distinct  p from Product p" +
+                " right join fetch p.users where p.title = :title").setParameter("title", "Barby").getResultList();
+        for (Product p: products) {
+            System.out.println(" ID "+ p.getTitle() +": "+p.getId());
+            for (User u: p.getUsers()){
+                System.out.println(u.getId() + " " + u.getName());
+            }
+        }
+
+        session.getTransaction().commit();
+
+
+
+
     }
 }

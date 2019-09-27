@@ -45,3 +45,4 @@ CREATE TABLE books_readers (
 ) ENGINE=InnoDB CHARSET=utf8;
 
 https://docs.oracle.com/javaee/6/api/javax/persistence/OneToMany.html#fetch%28%29
+
